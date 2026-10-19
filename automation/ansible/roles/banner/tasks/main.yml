@@ -1,0 +1,16 @@
+---
+- name: Render login banner from Jinja2 template
+  ansible.builtin.set_fact:
+    rendered_login_banner: "{{ lookup('template', 'login_banner.j2') | replace('\r', '') | trim }}"
+  tags:
+    - banner
+
+- name: Configure login banner
+  cisco.ios.ios_banner:
+    banner: login
+    text: "{{ rendered_login_banner }}"
+    state: present
+  notify: Save running configuration
+  tags:
+    - banner
+    - security

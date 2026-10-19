@@ -1,0 +1,31 @@
+---
+- name: Configure OSPF network statements
+  cisco.ios.ios_config:
+    parents:
+      - "router ospf {{ ospf.process_id }}"
+    lines:
+      - "network {{ item.network }} {{ item.wildcard }} area {{ item.area }}"
+  loop: "{{ ospf.networks }}"
+  when:
+    - ospf is defined
+    - ospf.networks is defined
+    - ospf.networks | length > 0
+  notify: Save running configuration
+  tags:
+    - ospf
+    - routing
+
+- name: Originate default route into OSPF
+  cisco.ios.ios_config:
+    parents:
+      - "router ospf {{ ospf.process_id }}"
+    lines:
+      - "default-information originate"
+  when:
+    - ospf is defined
+    - ospf.default_information_originate | default(false) | bool
+  notify: Save running configuration
+  tags:
+    - ospf
+    - routing
+    - default_route

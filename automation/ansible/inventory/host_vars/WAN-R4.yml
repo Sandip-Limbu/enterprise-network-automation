@@ -1,0 +1,58 @@
+---
+router_hostname: WAN-R4
+
+domain_name: mn521.test
+
+subinterfaces: []
+
+outside_interface:
+  interface: FastEthernet0/0
+  description: INTERNET-NAT-OUTSIDE
+  ip_assignment: dhcp
+  nat_role: outside
+
+wan_interfaces:
+  - interface: FastEthernet1/0
+    description: LINK-TO-HQ-R1
+    ip_address: 10.255.0.2
+    subnet_mask: 255.255.255.252
+    nat_role: inside
+
+  - interface: FastEthernet1/1
+    description: LINK-TO-BR-R3
+    ip_address: 10.255.0.5
+    subnet_mask: 255.255.255.252
+    nat_role: inside
+
+ospf:
+  process_id: 1
+  default_information_originate: true
+  networks:
+    - network: 10.255.0.0
+      wildcard: 0.0.0.3
+      area: 0
+    - network: 10.255.0.4
+      wildcard: 0.0.0.3
+      area: 0
+
+extended_acls: []
+
+nat:
+  enabled: true
+  access_list_number: 10
+  permitted_network: 10.0.0.0
+  wildcard: 0.255.255.255
+  outside_interface: FastEthernet0/0
+  overload: true
+
+ntp_servers:
+  - 10.20.30.10
+
+syslog_servers:
+  - 10.20.30.10
+
+login_banner: |
+  ****************************************************
+  Authorised access only - MN521 Enterprise Network
+  Unauthorised access is prohibited.
+  ****************************************************

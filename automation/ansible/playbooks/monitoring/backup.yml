@@ -1,0 +1,29 @@
+---
+- name: Backup Cisco router configurations
+  hosts: cisco
+  gather_facts: false
+
+  pre_tasks:
+    - name: Create backup directory on Ansible control node
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../../outputs/backups"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+      run_once: true
+
+  tasks:
+    - name: Backup running configuration
+      cisco.ios.ios_config:
+        backup: true
+        backup_options:
+          dir_path: "{{ playbook_dir }}/../../outputs/backups"
+      register: backup_result
+
+    - name: Display backup result
+      ansible.builtin.debug:
+        msg: "Configuration backup completed for {{ inventory_hostname }}"
+
+  tags:
+    - backup
+    - monitoring

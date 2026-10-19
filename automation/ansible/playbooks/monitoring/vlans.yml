@@ -1,0 +1,21 @@
+---
+- name: Verify VLAN subinterfaces
+  hosts: cisco
+  gather_facts: false
+
+  tasks:
+    - name: Collect VLAN subinterface configuration
+      cisco.ios.ios_command:
+        commands:
+          - show ip interface brief
+          - show running-config | include encapsulation dot1Q
+      register: vlan_output
+
+    - name: Display VLAN verification
+      ansible.builtin.debug:
+        var: vlan_output.stdout_lines
+
+  tags:
+    - vlans
+    - monitoring
+    - verification

@@ -1,0 +1,64 @@
+---
+router_hostname: HQ-R1
+
+domain_name: mn521.test
+
+subinterfaces:
+  - interface: FastEthernet0/0.10
+    description: HQ-STAFF-VLAN10
+    vlan_id: 10
+    ip_address: 10.10.10.1
+    subnet_mask: 255.255.255.0
+    inbound_acl: HQ-STAFF-FILTER
+
+  - interface: FastEthernet0/0.20
+    description: HQ-IT-VLAN20
+    vlan_id: 20
+    ip_address: 10.10.20.1
+    subnet_mask: 255.255.255.0
+
+wan_interfaces:
+  - interface: FastEthernet1/0
+    description: LINK-TO-WAN-R4
+    ip_address: 10.255.0.1
+    subnet_mask: 255.255.255.252
+
+  - interface: FastEthernet1/1
+    description: LINK-TO-DC-R2
+    ip_address: 10.255.0.9
+    subnet_mask: 255.255.255.252
+
+ospf:
+  process_id: 1
+  networks:
+    - network: 10.10.10.0
+      wildcard: 0.0.0.255
+      area: 0
+    - network: 10.10.20.0
+      wildcard: 0.0.0.255
+      area: 0
+    - network: 10.255.0.0
+      wildcard: 0.0.0.3
+      area: 0
+    - network: 10.255.0.8
+      wildcard: 0.0.0.3
+      area: 0
+
+extended_acls:
+  - name: HQ-STAFF-FILTER
+    entries:
+      - "remark Block HQ Staff from DC Management VLAN"
+      - "deny ip 10.10.10.0 0.0.0.255 10.20.40.0 0.0.0.255"
+      - "permit ip any any"
+
+ntp_servers:
+  - 10.20.30.10
+
+syslog_servers:
+  - 10.20.30.10
+
+login_banner: |
+  ****************************************************
+  Authorised access only - MN521 Enterprise Network
+  Unauthorised access is prohibited.
+  ****************************************************

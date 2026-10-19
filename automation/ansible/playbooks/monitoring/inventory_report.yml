@@ -1,0 +1,45 @@
+---
+- name: Generate Cisco device inventory reports
+  hosts: cisco
+  gather_facts: false
+
+  pre_tasks:
+    - name: Create inventory report directory
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../../outputs/inventory"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+      run_once: true
+
+  tasks:
+    - name: Gather Cisco IOS facts
+      cisco.ios.ios_facts:
+        gather_subset:
+          - min
+
+    - name: Display collected device facts
+      ansible.builtin.debug:
+        msg:
+          - "Device: {{ ansible_net_hostname | default(inventory_hostname) }}"
+          - "Model: {{ ansible_net_model | default('Unknown') }}"
+          - "IOS Version: {{ ansible_net_version | default('Unknown') }}"
+          - "Serial Number: {{ ansible_net_serialnum | default('Unknown') }}"
+
+    - name: Save device inventory report
+      ansible.builtin.copy:
+        dest: "{{ playbook_dir }}/../../outputs/inventory/{{ inventory_hostname }}.txt"
+        content: |
+          MN521 Enterprise Network - Device Inventory
+          ============================================
+          Inventory Name: {{ inventory_hostname }}
+          Hostname: {{ ansible_net_hostname | default('Unknown') }}
+          Model: {{ ansible_net_model | default('Unknown') }}
+          IOS Version: {{ ansible_net_version | default('Unknown') }}
+          Serial Number: {{ ansible_net_serialnum | default('Unknown') }}
+      delegate_to: localhost
+
+  tags:
+    - inventory
+    - monitoring
+    - reporting

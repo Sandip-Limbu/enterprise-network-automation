@@ -1,0 +1,25 @@
+---
+- name: Test enterprise network connectivity
+  hosts: cisco
+  gather_facts: false
+
+  vars:
+    connectivity_target: 10.20.30.10
+
+  tasks:
+    - name: Ping central Ubuntu server from each router
+      cisco.ios.ios_command:
+        commands:
+          - "ping {{ connectivity_target }} repeat 3 timeout 1"
+      register: ping_result
+
+    - name: Display connectivity result
+      ansible.builtin.debug:
+        msg:
+          - "Router: {{ inventory_hostname }}"
+          - "{{ ping_result.stdout[0] }}"
+
+  tags:
+    - connectivity
+    - monitoring
+    - verification

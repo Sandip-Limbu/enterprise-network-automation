@@ -1,0 +1,61 @@
+---
+- name: Configure parent interface for router-on-a-stick
+  cisco.ios.ios_config:
+    parents:
+      - "interface FastEthernet0/0"
+    lines:
+      - "no ip address"
+  when:
+    - subinterfaces is defined
+    - subinterfaces | length > 0
+  notify: Save running configuration
+  tags:
+    - interfaces
+    - vlans
+
+- name: Configure VLAN subinterfaces
+  cisco.ios.ios_config:
+    parents:
+      - "interface {{ item.interface }}"
+    lines:
+      - "description {{ item.description }}"
+      - "encapsulation dot1Q {{ item.vlan_id }}"
+      - "ip address {{ item.ip_address }} {{ item.subnet_mask }}"
+  loop: "{{ subinterfaces }}"
+  when:
+    - subinterfaces is defined
+    - subinterfaces | length > 0
+  notify: Save running configuration
+  tags:
+    - interfaces
+    - vlans
+
+- name: Configure WAN interfaces
+  cisco.ios.ios_config:
+    parents:
+      - "interface {{ item.interface }}"
+    lines:
+      - "description {{ item.description }}"
+      - "ip address {{ item.ip_address }} {{ item.subnet_mask }}"
+  loop: "{{ wan_interfaces }}"
+  when:
+    - wan_interfaces is defined
+    - wan_interfaces | length > 0
+  notify: Save running configuration
+  tags:
+    - interfaces
+    - wan
+
+- name: Configure Internet-facing DHCP interface
+  cisco.ios.ios_config:
+    parents:
+      - "interface {{ outside_interface.interface }}"
+    lines:
+      - "description {{ outside_interface.description }}"
+      - "ip address dhcp"
+  when:
+    - outside_interface is defined
+  notify: Save running configuration
+  tags:
+    - interfaces
+    - internet

@@ -1,0 +1,31 @@
+---
+- name: Monitor Cisco router CPU and memory
+  hosts: cisco
+  gather_facts: false
+
+  tasks:
+    - name: Collect CPU utilisation
+      cisco.ios.ios_command:
+        commands:
+          - show processes cpu | include CPU utilization
+      register: cpu_output
+
+    - name: Collect memory utilisation
+      cisco.ios.ios_command:
+        commands:
+          - show processes memory | include Processor
+      register: memory_output
+
+    - name: Display CPU utilisation
+      ansible.builtin.debug:
+        var: cpu_output.stdout_lines
+
+    - name: Display memory utilisation
+      ansible.builtin.debug:
+        var: memory_output.stdout_lines
+
+  tags:
+    - resources
+    - cpu
+    - memory
+    - monitoring

@@ -1,0 +1,23 @@
+---
+- name: Verify Ansible connectivity to enterprise routers
+  hosts: cisco
+  gather_facts: false
+
+  tasks:
+    - name: Gather minimum Cisco IOS facts
+      cisco.ios.ios_facts:
+        gather_subset:
+          - min
+      register: device_facts
+
+    - name: Display connected device information
+      ansible.builtin.debug:
+        msg:
+          - "Inventory device: {{ inventory_hostname }}"
+          - "Hostname: {{ ansible_net_hostname | default('Unknown') }}"
+          - "IOS version: {{ ansible_net_version | default('Unknown') }}"
+          - "Model: {{ ansible_net_model | default('Unknown') }}"
+
+  tags:
+    - precheck
+    - verification

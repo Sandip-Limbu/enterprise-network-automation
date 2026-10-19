@@ -1,0 +1,20 @@
+---
+- name: Verify Cisco router interfaces
+  hosts: cisco
+  gather_facts: false
+
+  tasks:
+    - name: Collect interface status
+      cisco.ios.ios_command:
+        commands:
+          - show ip interface brief
+      register: interface_output
+
+    - name: Display interface status
+      ansible.builtin.debug:
+        var: interface_output.stdout_lines
+
+  tags:
+    - interfaces
+    - monitoring
+    - verification

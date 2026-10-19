@@ -1,0 +1,53 @@
+---
+- name: Configure hostname
+  cisco.ios.ios_config:
+    lines:
+      - "hostname {{ router_hostname }}"
+  notify: Save running configuration
+  tags:
+    - base
+    - hostname
+
+- name: Configure domain name
+  cisco.ios.ios_config:
+    lines:
+      - "ip domain name {{ domain_name }}"
+  notify: Save running configuration
+  tags:
+    - base
+    - ssh
+
+- name: Enable SSH version 2
+  cisco.ios.ios_config:
+    lines:
+      - "ip ssh version 2"
+  notify: Save running configuration
+  tags:
+    - base
+    - ssh
+
+- name: Configure NTP servers
+  cisco.ios.ios_config:
+    lines:
+      - "ntp server {{ item }} version 3"
+  loop: "{{ ntp_servers }}"
+  when:
+    - ntp_servers is defined
+    - ntp_servers | length > 0
+  notify: Save running configuration
+  tags:
+    - base
+    - ntp
+
+- name: Configure Syslog servers
+  cisco.ios.ios_config:
+    lines:
+      - "logging {{ item }}"
+  loop: "{{ syslog_servers }}"
+  when:
+    - syslog_servers is defined
+    - syslog_servers | length > 0
+  notify: Save running configuration
+  tags:
+    - base
+    - syslog

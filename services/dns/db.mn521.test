@@ -1,0 +1,15 @@
+$TTL 86400
+
+@ IN SOA dns.mn521.test. admin.mn521.test. (
+			2026090102
+			3600
+			1800
+			604800
+			86400
+)
+
+@	IN	NS	dns.mn521.test.
+dns	IN	A	10.20.30.10
+hq-r1	IN	A	10.10.10.1
+dc-r2	IN	A	10.20.30.1
+br-r3	IN	A	10.30.50.1

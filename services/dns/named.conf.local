@@ -1,0 +1,11 @@
+
+
+zone "mn521.local" {
+	type master;
+	file "/etc/bind/db.mn521.local";
+};
+
+zone "mn521.test" {
+	type master;
+	file "/etc/bind/db.mn521.test";
+};

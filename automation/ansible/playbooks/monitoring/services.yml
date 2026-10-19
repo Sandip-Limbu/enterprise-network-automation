@@ -1,0 +1,51 @@
+---
+- name: Verify automated network services
+  hosts: cisco
+  gather_facts: false
+
+  tasks:
+    - name: Collect hostname configuration
+      cisco.ios.ios_command:
+        commands:
+          - show running-config | include ^hostname
+      register: hostname_output
+
+    - name: Collect SSH configuration
+      cisco.ios.ios_command:
+        commands:
+          - show running-config | include ^ip ssh version
+          - show running-config | section line vty
+      register: ssh_output
+
+    - name: Collect NTP configuration
+      cisco.ios.ios_command:
+        commands:
+          - show running-config | include ^ntp server
+          - show ntp status
+      register: ntp_output
+
+    - name: Collect Syslog configuration
+      cisco.ios.ios_command:
+        commands:
+          - show running-config | include ^logging
+      register: syslog_output
+
+    - name: Collect banner configuration
+      cisco.ios.ios_command:
+        commands:
+          - show running-config | include ^banner login
+      register: banner_output
+
+    - name: Display automated service verification
+      ansible.builtin.debug:
+        msg:
+          - "Hostname: {{ hostname_output.stdout[0] }}"
+          - "SSH: {{ ssh_output.stdout | join(' | ') }}"
+          - "NTP: {{ ntp_output.stdout | join(' | ') }}"
+          - "Syslog: {{ syslog_output.stdout[0] }}"
+          - "Banner: {{ banner_output.stdout[0] }}"
+
+  tags:
+    - services
+    - monitoring
+    - verification

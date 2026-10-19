@@ -1,0 +1,30 @@
+---
+- name: Configure extended ACLs
+  cisco.ios.ios_config:
+    parents:
+      - "ip access-list extended {{ item.0.name }}"
+    lines:
+      - "{{ item.1 | regex_replace('^deny ip ', 'deny   ip ') }}"
+  loop: "{{ extended_acls | subelements('entries') }}"
+  when:
+    - extended_acls is defined
+    - extended_acls | length > 0
+  notify: Save running configuration
+  tags:
+    - acl
+    - security
+
+- name: Apply inbound ACLs to VLAN subinterfaces
+  cisco.ios.ios_config:
+    parents:
+      - "interface {{ item.interface }}"
+    lines:
+      - "ip access-group {{ item.inbound_acl }} in"
+  loop: "{{ subinterfaces }}"
+  when:
+    - subinterfaces is defined
+    - item.inbound_acl is defined
+  notify: Save running configuration
+  tags:
+    - acl
+    - security

@@ -1,0 +1,38 @@
+---
+- name: Configure MN521 enterprise Cisco routers
+  hosts: cisco
+  gather_facts: false
+
+  roles:
+    - role: base
+      tags:
+        - base
+
+    - role: interfaces
+      tags:
+        - interfaces
+        - vlans
+
+    - role: ospf
+      tags:
+        - ospf
+        - routing
+
+    - role: ssh
+      tags:
+        - ssh
+        - security
+
+    - role: acl
+      tags:
+        - acl
+        - security
+
+    - role: nat
+      tags:
+        - nat
+
+    - role: banner
+      tags:
+        - banner
+        - security

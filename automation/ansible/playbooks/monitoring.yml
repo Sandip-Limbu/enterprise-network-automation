@@ -1,0 +1,10 @@
+---
+- import_playbook: monitoring/backup.yml
+- import_playbook: monitoring/interfaces.yml
+- import_playbook: monitoring/routing.yml
+- import_playbook: monitoring/vlans.yml
+- import_playbook: monitoring/acl.yml
+- import_playbook: monitoring/resources.yml
+- import_playbook: monitoring/connectivity.yml
+- import_playbook: monitoring/inventory_report.yml
+- import_playbook: monitoring/services.yml

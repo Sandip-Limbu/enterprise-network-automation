@@ -1,0 +1,21 @@
+---
+- name: Verify access control lists
+  hosts: cisco
+  gather_facts: false
+
+  tasks:
+    - name: Collect ACL information
+      cisco.ios.ios_command:
+        commands:
+          - show access-lists
+      register: acl_output
+
+    - name: Display ACL information
+      ansible.builtin.debug:
+        var: acl_output.stdout_lines
+
+  tags:
+    - acl
+    - security
+    - monitoring
+    - verification

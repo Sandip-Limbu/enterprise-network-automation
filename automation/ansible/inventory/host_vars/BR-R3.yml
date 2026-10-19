@@ -1,0 +1,64 @@
+---
+router_hostname: BR-R3
+
+domain_name: mn521.test
+
+subinterfaces:
+  - interface: FastEthernet0/0.50
+    description: BR-STAFF-VLAN50
+    vlan_id: 50
+    ip_address: 10.30.50.1
+    subnet_mask: 255.255.255.0
+    inbound_acl: BR-STAFF-FILTER
+
+  - interface: FastEthernet0/0.60
+    description: BR-IT-VLAN60
+    vlan_id: 60
+    ip_address: 10.30.60.1
+    subnet_mask: 255.255.255.0
+
+wan_interfaces:
+  - interface: FastEthernet1/0
+    description: LINK-TO-WAN-R4
+    ip_address: 10.255.0.6
+    subnet_mask: 255.255.255.252
+
+  - interface: FastEthernet1/1
+    description: LINK-TO-DC-R2
+    ip_address: 10.255.0.14
+    subnet_mask: 255.255.255.252
+
+ospf:
+  process_id: 1
+  networks:
+    - network: 10.30.50.0
+      wildcard: 0.0.0.255
+      area: 0
+    - network: 10.30.60.0
+      wildcard: 0.0.0.255
+      area: 0
+    - network: 10.255.0.4
+      wildcard: 0.0.0.3
+      area: 0
+    - network: 10.255.0.12
+      wildcard: 0.0.0.3
+      area: 0
+
+extended_acls:
+  - name: BR-STAFF-FILTER
+    entries:
+      - "remark Block Branch Staff from DC Management VLAN"
+      - "deny ip 10.30.50.0 0.0.0.255 10.20.40.0 0.0.0.255"
+      - "permit ip any any"
+
+ntp_servers:
+  - 10.20.30.10
+
+syslog_servers:
+  - 10.20.30.10
+
+login_banner: |
+  ****************************************************
+  Authorised access only - MN521 Enterprise Network
+  Unauthorised access is prohibited.
+  ****************************************************

@@ -1,0 +1,31 @@
+---
+- name: Verify OSPF and routing
+  hosts: cisco
+  gather_facts: false
+
+  tasks:
+    - name: Collect OSPF neighbours
+      cisco.ios.ios_command:
+        commands:
+          - show ip ospf neighbor
+      register: ospf_neighbors
+
+    - name: Collect routing table
+      cisco.ios.ios_command:
+        commands:
+          - show ip route
+      register: routing_table
+
+    - name: Display OSPF neighbours
+      ansible.builtin.debug:
+        var: ospf_neighbors.stdout_lines
+
+    - name: Display routing table
+      ansible.builtin.debug:
+        var: routing_table.stdout_lines
+
+  tags:
+    - ospf
+    - routing
+    - monitoring
+    - verification

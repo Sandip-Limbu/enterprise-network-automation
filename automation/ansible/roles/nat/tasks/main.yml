@@ -1,0 +1,47 @@
+---
+- name: Configure NAT outside interface
+  cisco.ios.ios_config:
+    parents:
+      - "interface {{ outside_interface.interface }}"
+    lines:
+      - "ip nat outside"
+  when:
+    - (nat | default({})).get('enabled', false) | bool
+    - outside_interface is defined
+  notify: Save running configuration
+  tags:
+    - nat
+
+- name: Configure NAT inside interfaces
+  cisco.ios.ios_config:
+    parents:
+      - "interface {{ item.interface }}"
+    lines:
+      - "ip nat inside"
+  loop: "{{ wan_interfaces | default([]) }}"
+  when:
+    - (nat | default({})).get('enabled', false) | bool
+  notify: Save running configuration
+  tags:
+    - nat
+
+- name: Configure NAT access list
+  cisco.ios.ios_config:
+    lines:
+      - "access-list {{ nat.access_list_number }} permit {{ nat.permitted_network }} {{ nat.wildcard }}"
+  when:
+    - (nat | default({})).get('enabled', false) | bool
+  notify: Save running configuration
+  tags:
+    - nat
+
+- name: Configure NAT overload
+  cisco.ios.ios_config:
+    lines:
+      - "ip nat inside source list {{ nat.access_list_number }} interface {{ nat.outside_interface }} overload"
+  when:
+    - (nat | default({})).get('enabled', false) | bool
+    - nat.overload | default(false) | bool
+  notify: Save running configuration
+  tags:
+    - nat

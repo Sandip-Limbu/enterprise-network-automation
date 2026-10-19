@@ -1,0 +1,58 @@
+---
+router_hostname: DC-R2
+
+domain_name: mn521.test
+
+subinterfaces:
+  - interface: FastEthernet0/0.30
+    description: DC-SERVERS-VLAN30
+    vlan_id: 30
+    ip_address: 10.20.30.1
+    subnet_mask: 255.255.255.0
+
+  - interface: FastEthernet0/0.40
+    description: DC-MGMT-VLAN40
+    vlan_id: 40
+    ip_address: 10.20.40.1
+    subnet_mask: 255.255.255.0
+
+wan_interfaces:
+  - interface: FastEthernet1/0
+    description: LINK-TO-HQ-R1
+    ip_address: 10.255.0.10
+    subnet_mask: 255.255.255.252
+
+  - interface: FastEthernet1/1
+    description: LINK-TO-BR-R3
+    ip_address: 10.255.0.13
+    subnet_mask: 255.255.255.252
+
+ospf:
+  process_id: 1
+  networks:
+    - network: 10.20.30.0
+      wildcard: 0.0.0.255
+      area: 0
+    - network: 10.20.40.0
+      wildcard: 0.0.0.255
+      area: 0
+    - network: 10.255.0.8
+      wildcard: 0.0.0.3
+      area: 0
+    - network: 10.255.0.12
+      wildcard: 0.0.0.3
+      area: 0
+
+extended_acls: []
+
+ntp_servers:
+  - 10.20.30.10
+
+syslog_servers:
+  - 10.20.30.10
+
+login_banner: |
+  ****************************************************
+  Authorised access only - MN521 Enterprise Network
+  Unauthorised access is prohibited.
+  ****************************************************

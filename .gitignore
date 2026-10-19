@@ -1,0 +1,31 @@
+# Credentials and secrets
+*.pem
+*.key
+*.p12
+*.pfx
+*.vault
+vault_pass*
+.env
+.env.*
+secrets*
+credentials*
+
+# Ansible sensitive files
+**/group_vars/cisco.yml
+**/group_vars/*/vault*
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# macOS / editors
+.DS_Store
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.bak
+*~
